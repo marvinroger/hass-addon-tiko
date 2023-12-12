@@ -23,7 +23,7 @@
   "schema": {
     "TIKO_EMAIL": "email",
     "TIKO_PASSWORD": "password",
-    "TIKO_PROPERTY_ID": "int?",
+    "TIKO_PROPERTY_ID": "str?",
     "MQTT_BROKER_URL": "str?",
     "MQTT_USERNAME": "str?",
     "MQTT_PASSWORD": "password?",
