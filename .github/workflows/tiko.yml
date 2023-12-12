@@ -1,0 +1,27 @@
+name: "tiko"
+
+on:
+  push:
+    branches: [main]
+    paths: ['tiko/**']
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --all \
+            --docker-hub ghcr.io/${{ github.repository_owner }} --image hass-addon-tiko-{arch} \
+            --target tiko
