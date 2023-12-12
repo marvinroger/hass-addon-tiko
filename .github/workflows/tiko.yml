@@ -3,7 +3,7 @@ name: "tiko"
 on:
   push:
     branches: [main]
-    paths: ['tiko/**']
+    paths: ['tiko/**', '.github/workflows/tiko.yml']
 
 jobs:
   deploy:
