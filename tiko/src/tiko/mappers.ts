@@ -88,7 +88,8 @@ export function serializePresetMode(mode: PresetMode): TikoPresetMode {
 type Room = {
   id: number;
   name: string;
-  energyKwh: number;
+  /** tiko sometimes returns 0 when their system is unavailable, so we normalize to `undefined` to avoid statistics issues */
+  energyKwh: number | undefined;
   currentTemperature: number;
   currentHumidity: number;
   targetTemperature: number;
@@ -133,7 +134,10 @@ export function mapProperties(
       rooms.push({
         id: room.id,
         name: room.name,
-        energyKwh: relevantConsumption.energyKwh,
+        energyKwh:
+          relevantConsumption.energyKwh !== 0
+            ? relevantConsumption.energyKwh
+            : undefined,
         currentTemperature: room.currentTemperatureDegrees,
         currentHumidity: room.humidity,
         targetTemperature: room.targetTemperatureDegrees,

@@ -102,15 +102,18 @@ export function computeHassMqttConfiguration(
           state_topic: energyStateTopic,
           value_template: "{{ value_json.energy }}",
         }),
-      },
-      {
+      }
+    );
+
+    if (room.energyKwh !== undefined) {
+      messages.push({
         topic: energyStateTopic,
         retain: true,
         message: JSON.stringify({
           energy: room.energyKwh,
         }),
-      }
-    );
+      });
+    }
   }
 
   return { commandTopics, messages };
