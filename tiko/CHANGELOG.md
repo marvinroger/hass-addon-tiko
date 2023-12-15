@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.0.3
+
+- Fix container not starting
+
 ## 1.0.2
 
 - Add support for Mon Pilotage Elec (not tested)

@@ -1,5 +1,7 @@
 #!/usr/bin/env bashio
 
+export TIKO_PROVIDER
+TIKO_PROVIDER=$(bashio::config 'TIKO_PROVIDER')
 export TIKO_EMAIL
 TIKO_EMAIL=$(bashio::config 'TIKO_EMAIL')
 export TIKO_PASSWORD
