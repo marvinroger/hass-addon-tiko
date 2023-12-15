@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.0.5
+
+- Ignore humidity data if it's not supported
+
 ## 1.0.4
 
 - Fix domain prefix

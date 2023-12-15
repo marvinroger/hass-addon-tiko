@@ -95,7 +95,8 @@ export const GET_DATA_QUERY = {
               id: z.number(),
               name: z.string(),
               currentTemperatureDegrees: z.number(),
-              humidity: z.number(),
+              // Mon Pilotage Elec does not have humidity sensors
+              humidity: z.number().nullable(),
               targetTemperatureDegrees: z.number(),
               mode: z.object({
                 absence: z.boolean(),

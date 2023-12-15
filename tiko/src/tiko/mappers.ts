@@ -91,7 +91,7 @@ type Room = {
   /** tiko sometimes returns 0 when their system is unavailable, so we normalize to `undefined` to avoid statistics issues */
   energyKwh: number | undefined;
   currentTemperature: number;
-  currentHumidity: number;
+  currentHumidity: number | undefined;
   targetTemperature: number;
   presetMode: PresetMode | undefined;
   heating: boolean;
@@ -139,7 +139,7 @@ export function mapProperties(
             ? relevantConsumption.energyKwh
             : undefined,
         currentTemperature: room.currentTemperatureDegrees,
-        currentHumidity: room.humidity,
+        currentHumidity: room.humidity == null ? undefined : room.humidity,
         targetTemperature: room.targetTemperatureDegrees,
         presetMode,
         heating: room.status.heatingOperating,
