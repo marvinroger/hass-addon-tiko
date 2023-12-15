@@ -113,7 +113,7 @@ export function mapProperties(
   for (const property of getDataResponse.properties) {
     const rooms: Room[] = [];
 
-    for (const room of property.rooms) {
+    for (const room of property.rooms ?? []) {
       const presetModeResult = mapPresetMode(room.mode);
 
       if (presetModeResult.isErr()) {

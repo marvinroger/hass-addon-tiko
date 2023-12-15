@@ -89,35 +89,37 @@ export const GET_DATA_QUERY = {
             })
           ),
         }),
-        rooms: z.array(
-          z.object({
-            id: z.number(),
-            name: z.string(),
-            currentTemperatureDegrees: z.number(),
-            humidity: z.number(),
-            targetTemperatureDegrees: z.number(),
-            mode: z.object({
-              absence: z.boolean(),
-              boost: z.boolean(),
-              disableHeating: z.boolean(),
-              frost: z.boolean(),
-            }),
-            devices: z.array(
-              z.object({
-                id: z.number(),
-                mac: z.string(),
-                type: z.string(),
-                code: z.string(),
-              })
-            ),
-            status: z.object({
-              disconnected: z.boolean(),
-              heatingOperating: z.boolean(),
-              sensorBatteryLow: z.boolean(),
-              sensorDisconnected: z.boolean(),
-            }),
-          })
-        ),
+        rooms: z
+          .array(
+            z.object({
+              id: z.number(),
+              name: z.string(),
+              currentTemperatureDegrees: z.number(),
+              humidity: z.number(),
+              targetTemperatureDegrees: z.number(),
+              mode: z.object({
+                absence: z.boolean(),
+                boost: z.boolean(),
+                disableHeating: z.boolean(),
+                frost: z.boolean(),
+              }),
+              devices: z.array(
+                z.object({
+                  id: z.number(),
+                  mac: z.string(),
+                  type: z.string(),
+                  code: z.string(),
+                })
+              ),
+              status: z.object({
+                disconnected: z.boolean(),
+                heatingOperating: z.boolean(),
+                sensorBatteryLow: z.boolean(),
+                sensorDisconnected: z.boolean(),
+              }),
+            })
+          )
+          .nullable(),
       })
     ),
   }),
