@@ -1,6 +1,8 @@
 import { ok, err, Result } from "neverthrow";
+import { PROVIDER_SCHEMA, Provider } from "./tiko/providers.js";
 
 export type TikoConfig = {
+  provider: Provider;
   email: string;
   password: string;
   propertyId: number | undefined;
@@ -19,6 +21,16 @@ type Configuration = {
 };
 
 export function loadConfiguration(): Result<Configuration, Error> {
+  if (!process.env["TIKO_PROVIDER"]) {
+    return err(new Error("TIKO_PROVIDER is missing"));
+  }
+
+  const tikoProvider = PROVIDER_SCHEMA.safeParse(process.env["TIKO_PROVIDER"]);
+
+  if (!tikoProvider.success) {
+    return err(tikoProvider.error);
+  }
+
   if (!process.env["TIKO_EMAIL"]) {
     return err(new Error("TIKO_EMAIL is missing"));
   }
@@ -61,6 +73,7 @@ export function loadConfiguration(): Result<Configuration, Error> {
   return ok({
     updateIntervalMinutes,
     tiko: {
+      provider: tikoProvider.data,
       email: process.env["TIKO_EMAIL"],
       password: process.env["TIKO_PASSWORD"],
       propertyId: tikoPropertyId,

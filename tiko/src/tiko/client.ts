@@ -11,16 +11,22 @@ import {
 import { Properties, mapPresetMode, mapProperties } from "./mappers.js";
 import { TikoConfig } from "../config.js";
 import { PresetMode } from "../hass.js";
+import { DOMAIN_PER_PROVIDER } from "./providers.js";
 
 export class TikoClient {
+  private domain: string;
+
   private token?: string;
 
-  constructor(private readonly config: TikoConfig) {}
+  constructor(private readonly config: TikoConfig) {
+    this.domain = DOMAIN_PER_PROVIDER[config.provider];
+  }
 
   async getToken(): Promise<Result<string, Error>> {
     if (this.token) return ok(this.token);
 
     const dataResult = await doTikoRequest({
+      domain: this.domain,
       queryDefinition: LOGIN_MUTATION,
       variables: {
         email: this.config.email,
@@ -55,6 +61,7 @@ export class TikoClient {
     const consumptionEndTimestamp = timeReference.getTime();
 
     const responseResult = await doTikoRequest({
+      domain: this.domain,
       queryDefinition: GET_DATA_QUERY,
       variables: {
         consumptionStartTimestamp,
@@ -88,6 +95,7 @@ export class TikoClient {
     const token = tokenResult.value;
 
     const responseResult = await doTikoRequest({
+      domain: this.domain,
       queryDefinition: SET_ROOM_TEMPERATURE_MUTATION,
       variables: {
         propertyId: params.propertyId,
@@ -124,6 +132,7 @@ export class TikoClient {
     const token = tokenResult.value;
 
     const responseResult = await doTikoRequest({
+      domain: this.domain,
       queryDefinition: SET_ROOM_MODE_MUTATION,
       variables: {
         propertyId: params.propertyId,
@@ -153,6 +162,7 @@ type DoTikoRequestParams<
   VariablesSchema extends z.ZodSchema,
   DataSchema extends z.ZodSchema
 > = {
+  domain: string;
   queryDefinition: QueryDefinition<VariablesSchema, DataSchema>;
   variables: z.infer<VariablesSchema>;
   token?: string;
@@ -162,6 +172,7 @@ async function doTikoRequest<
   VariablesSchema extends ZodSchema,
   DataSchema extends z.ZodSchema
 >({
+  domain,
   queryDefinition,
   variables,
   token,
@@ -169,7 +180,7 @@ async function doTikoRequest<
   Result<z.infer<DataSchema>, Error>
 > {
   const responseResult = await ResultAsync.fromPromise(
-    fetch("https://particuliers-tiko.fr/api/v3/graphql/", {
+    fetch(`https://${domain}/api/v3/graphql/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

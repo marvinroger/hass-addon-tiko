@@ -1,5 +1,6 @@
 {
   "configuration": {
+    "TIKO_PROVIDER": { "name": "tiko provider" },
     "TIKO_EMAIL": { "name": "tiko email" },
     "TIKO_PASSWORD": { "name": "tiko password" },
     "TIKO_PROPERTY_ID": {
