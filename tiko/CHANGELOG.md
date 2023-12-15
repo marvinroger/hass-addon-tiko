@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.0.4
+
+- Fix domain prefix
+
 ## 1.0.3
 
 - Fix container not starting
