@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.0.6
+
+- Fix issue where MQTT discovery could fail
+
 ## 1.0.5
 
 - Ignore humidity data if it's not supported

@@ -50,7 +50,7 @@ export function computeHassMqttConfiguration(
           min_temp: 7,
           max_temp: 25,
           temp_step: 0.5,
-          preset_modes: PRESET_MODES,
+          preset_modes: PRESET_MODES_WITHOUT_NONE,
           modes: ["heat", "off"],
 
           availability: [GLOBAL_AVAILABILITY_CONFIG],
@@ -125,13 +125,15 @@ export const HASS_MQTT_BIRTH_TOPIC = `${HASS_MQTT_DISCOVERY_PREFIX}/status`;
 export const GLOBAL_AVAILABILITY_TOPIC = `${HASS_MQTT_DISCOVERY_PREFIX}/tiko/availability`;
 const GLOBAL_AVAILABILITY_CONFIG = { topic: GLOBAL_AVAILABILITY_TOPIC };
 
-const PRESET_MODES = [
-  "none",
+// `none` is a special case in Home Assistant and must not be advertised
+const PRESET_MODES_WITHOUT_NONE = [
   "off",
   "away",
   "boost",
   "frostprotection",
 ] as const;
+
+const PRESET_MODES = ["none", ...PRESET_MODES_WITHOUT_NONE] as const;
 export type PresetMode = (typeof PRESET_MODES)[number];
 const PRESET_MODE_SCHEMA = z.enum(PRESET_MODES);
 export const CLIMATE_COMMAND_SCHEMA = z.union([
