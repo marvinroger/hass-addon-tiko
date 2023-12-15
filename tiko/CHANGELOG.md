@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 1.1.0
+
+- Allow the add-on to run outside of the Home Assistant Supervisor context.
+
+  This allows the add-on to be deployed as a standalone container for advanced use-cases
+
 ## 1.0.6
 
 - Fix issue where MQTT discovery could fail
