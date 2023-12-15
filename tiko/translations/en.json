@@ -1,0 +1,26 @@
+{
+  "configuration": {
+    "TIKO_EMAIL": { "name": "tiko email" },
+    "TIKO_PASSWORD": { "name": "tiko password" },
+    "TIKO_PROPERTY_ID": {
+      "name": "tiko property ID",
+      "description": "The ID of the property you want to monitor. You can find the properties IDs in the startup log of the add-on. If not set, the add-on will monitor the first property."
+    },
+    "MQTT_BROKER_URL": {
+      "name": "MQTT broker URL",
+      "description": "The URL of the MQTT broker. If not set, the add-on will use the MQTT add-on service."
+    },
+    "MQTT_USERNAME": {
+      "name": "MQTT username",
+      "description": "The MQTT username. If MQTT broker URL is not set, the add-on will use the MQTT add-on service."
+    },
+    "MQTT_PASSWORD": {
+      "name": "MQTT password",
+      "description": "The MQTT password. If MQTT broker URL is not set, the add-on will use the MQTT add-on service."
+    },
+    "UPDATE_INTERVAL_MINUTES": {
+      "name": "Update interval (in minutes)",
+      "description": "The interval between updates."
+    }
+  }
+}
