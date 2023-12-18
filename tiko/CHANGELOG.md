@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.2.0
+
+- Add new sensors for the current temperature and humidity
+
 ## 1.1.0
 
 - Allow the add-on to run outside of the Home Assistant Supervisor context.

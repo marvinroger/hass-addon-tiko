@@ -18,11 +18,22 @@ export function computeHassMqttConfiguration(
 
   for (const room of property.rooms) {
     const fqid = `${HASS_ID_PREFIX}${room.id}`;
+
     const climateEntityTopic = `${HASS_MQTT_DISCOVERY_PREFIX}/climate/${fqid}`;
     const climateStateTopic = `${climateEntityTopic}/state`;
     const climateCommandTopic = `${climateEntityTopic}/set`;
+
     const energyEntityTopic = `${HASS_MQTT_DISCOVERY_PREFIX}/sensor/${fqid}`;
     const energyStateTopic = `${energyEntityTopic}/state`;
+
+    const temperatureEntityId = `${fqid}_temperature`;
+    const temperatureEntityTopic = `${HASS_MQTT_DISCOVERY_PREFIX}/sensor/${temperatureEntityId}`;
+    const temperatureStateTopic = `${temperatureEntityTopic}/state`;
+
+    const humidityEntityId = `${fqid}_humidity`;
+    const humidityEntityTopic = `${HASS_MQTT_DISCOVERY_PREFIX}/sensor/${humidityEntityId}`;
+    const humidityStateTopic = `${humidityEntityTopic}/state`;
+
     const device = {
       manufacturer: "tiko",
       identifiers: [fqid],
@@ -102,10 +113,65 @@ export function computeHassMqttConfiguration(
           state_topic: energyStateTopic,
           value_template: "{{ value_json.energy }}",
         }),
+      },
+      {
+        topic: `${temperatureEntityTopic}/config`,
+        retain: false,
+        message: JSON.stringify({
+          unique_id: temperatureEntityId,
+          name: "Temperature",
+          device,
+
+          device_class: "temperature",
+          state_class: "measurement",
+          unit_of_measurement: "°C",
+
+          availability: [GLOBAL_AVAILABILITY_CONFIG],
+
+          state_topic: temperatureStateTopic,
+          value_template: "{{ value_json.temperature }}",
+        }),
+      },
+      {
+        topic: temperatureStateTopic,
+        retain: true,
+        message: JSON.stringify({
+          temperature: room.currentTemperature,
+        }),
       }
     );
 
-    if (room.energyKwh !== undefined) {
+    if (room.currentHumidity != undefined) {
+      messages.push(
+        {
+          topic: `${humidityEntityTopic}/config`,
+          retain: false,
+          message: JSON.stringify({
+            unique_id: humidityEntityId,
+            name: "Humidity",
+            device,
+
+            device_class: "humidity",
+            state_class: "measurement",
+            unit_of_measurement: "%",
+
+            availability: [GLOBAL_AVAILABILITY_CONFIG],
+
+            state_topic: humidityStateTopic,
+            value_template: "{{ value_json.humidity }}",
+          }),
+        },
+        {
+          topic: humidityStateTopic,
+          retain: true,
+          message: JSON.stringify({
+            humidity: room.currentHumidity,
+          }),
+        }
+      );
+    }
+
+    if (room.energyKwh != undefined) {
       messages.push({
         topic: energyStateTopic,
         retain: true,
