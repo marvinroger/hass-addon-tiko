@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 1.3.0
+
+- Add a new `Bypass tiko schedule` option to avoid having the target temperature reset by the tiko schedule.
+
+  This works by effectively deleting all the schedules set on the tiko app
 
 ## 1.2.0
 

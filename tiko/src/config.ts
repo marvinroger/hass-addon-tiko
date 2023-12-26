@@ -6,6 +6,7 @@ export type TikoConfig = {
   email: string;
   password: string;
   propertyId: number | undefined;
+  bypassSchedule: boolean;
 };
 
 export type MqttConfig = {
@@ -57,6 +58,14 @@ export function loadConfiguration(): Result<Configuration, Error> {
 
   const updateIntervalMinutes = updateIntervalMinutesResult.value;
 
+  const tikoBypassScheduleResult = parseBoolean(
+    process.env["TIKO_BYPASS_SCHEDULE"]
+  );
+
+  if (tikoBypassScheduleResult.isErr()) {
+    return err(tikoBypassScheduleResult.error);
+  }
+
   let tikoPropertyId: number | undefined = undefined;
   if (process.env["TIKO_PROPERTY_ID"]) {
     const tikoPropertyIdResult = parsePositiveInteger(
@@ -77,6 +86,7 @@ export function loadConfiguration(): Result<Configuration, Error> {
       email: process.env["TIKO_EMAIL"],
       password: process.env["TIKO_PASSWORD"],
       propertyId: tikoPropertyId,
+      bypassSchedule: tikoBypassScheduleResult.value ?? false,
     },
     mqtt: {
       brokerUrl: process.env["MQTT_BROKER_URL"],
@@ -94,4 +104,22 @@ function parsePositiveInteger(value: string): Result<number, Error> {
   }
 
   return ok(parsed);
+}
+
+function parseBoolean(
+  value: string | undefined
+): Result<boolean | undefined, Error> {
+  if (value === undefined) {
+    return ok(undefined);
+  }
+
+  if (value === "true") {
+    return ok(true);
+  }
+
+  if (value === "false") {
+    return ok(false);
+  }
+
+  return err(new Error(`${value} is not a boolean`));
 }

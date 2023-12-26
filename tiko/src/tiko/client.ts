@@ -7,6 +7,7 @@ import {
   QueryDefinition,
   SET_ROOM_MODE_MUTATION,
   SET_ROOM_TEMPERATURE_MUTATION,
+  SET_ROOM_TEMPERATURE_WITH_SCHEDULE_MUTATION,
 } from "./query-responses.js";
 import { Properties, mapPresetMode, mapProperties } from "./mappers.js";
 import { TikoConfig } from "../config.js";
@@ -15,11 +16,13 @@ import { DOMAIN_PER_PROVIDER } from "./providers.js";
 
 export class TikoClient {
   private domain: string;
+  private bypassSchedule: boolean;
 
   private token?: string;
 
   constructor(private readonly config: TikoConfig) {
     this.domain = DOMAIN_PER_PROVIDER[config.provider];
+    this.bypassSchedule = config.bypassSchedule;
   }
 
   async getToken(): Promise<Result<string, Error>> {
@@ -94,13 +97,22 @@ export class TikoClient {
 
     const token = tokenResult.value;
 
+    const schedule = Object.fromEntries(
+      SCHEDULE_DAYS.map((day) => [day, [["00:00", params.targetTemperature]]])
+    );
+
     const responseResult = await doTikoRequest({
       domain: this.domain,
-      queryDefinition: SET_ROOM_TEMPERATURE_MUTATION,
+      queryDefinition: this.bypassSchedule
+        ? SET_ROOM_TEMPERATURE_WITH_SCHEDULE_MUTATION
+        : SET_ROOM_TEMPERATURE_MUTATION,
       variables: {
         propertyId: params.propertyId,
         roomId: params.roomId,
         temperature: params.targetTemperature,
+        ...(this.bypassSchedule
+          ? { scheduleData: JSON.stringify(schedule) }
+          : {}),
       },
       token,
     });
@@ -232,3 +244,5 @@ const TIKO_MUTATION_MODE_PER_PRESET_MODE: Record<
   boost: "boost",
   frostprotection: "frost",
 };
+
+const SCHEDULE_DAYS = ["0", "1", "2", "3", "4", "5", "6"];

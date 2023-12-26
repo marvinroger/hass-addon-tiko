@@ -11,6 +11,10 @@ if bashio::supervisor.ping; then
     TIKO_PASSWORD=$(bashio::config 'TIKO_PASSWORD')
     export TIKO_PROPERTY_ID
     TIKO_PROPERTY_ID=$(bashio::config 'TIKO_PROPERTY_ID')
+    export TIKO_BYPASS_SCHEDULE="false"
+    if bashio::config.true 'TIKO_BYPASS_SCHEDULE'; then
+        TIKO_BYPASS_SCHEDULE="true"
+    fi
     export MQTT_BROKER_URL
     MQTT_BROKER_URL=$(bashio::config 'MQTT_BROKER_URL')
     export MQTT_USERNAME

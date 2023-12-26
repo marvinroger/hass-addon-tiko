@@ -7,6 +7,10 @@
       "name": "tiko property ID",
       "description": "The ID of the property you want to monitor. You can find the properties IDs in the startup log of the add-on. If not set, the add-on will monitor the first property."
     },
+    "TIKO_BYPASS_SCHEDULE": {
+      "name": "Bypass tiko schedule",
+      "description": "Enabling this option will bypass the server-side tiko schedule, effectively deleting all the schedules set on the tiko app."
+    },
     "MQTT_BROKER_URL": {
       "name": "MQTT broker URL",
       "description": "The URL of the MQTT broker. If not set, the add-on will use the MQTT add-on service."

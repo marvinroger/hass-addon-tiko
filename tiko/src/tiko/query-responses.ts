@@ -156,6 +156,44 @@ export const SET_ROOM_TEMPERATURE_MUTATION = {
   }),
 } as const satisfies QueryDefinition;
 
+export const SET_ROOM_TEMPERATURE_WITH_SCHEDULE_MUTATION = {
+  query: `
+    mutation SetRoomTemperatureWithSchedule($propertyId: Int!, $roomId: Int!, $temperature: Float!, $scheduleData: JSONString!) {
+      setRoomAdjustTemperature(
+        input: {propertyId: $propertyId, roomId: $roomId, temperature: $temperature}
+      ) {
+        adjustTemperature {
+          active
+          temperature
+        }
+      }
+
+      setRoomTemperatureSchedule(
+        input: {propertyId: $propertyId, roomId: $roomId, scheduleData: $scheduleData}
+      ) {
+        id
+      }
+    }
+`,
+  variablesSchema: z.object({
+    propertyId: z.number(),
+    roomId: z.number(),
+    temperature: z.number(),
+    scheduleData: z.string(),
+  }),
+  dataSchema: z.object({
+    setRoomAdjustTemperature: z.object({
+      adjustTemperature: z.object({
+        active: z.boolean(),
+        temperature: z.number(),
+      }),
+    }),
+    setRoomTemperatureSchedule: z.object({
+      id: z.number(),
+    }),
+  }),
+} as const satisfies QueryDefinition;
+
 export const SET_ROOM_MODE_MUTATION = {
   query: `
     mutation SetRoomMode($propertyId: Int!, $roomId: Int!, $mode: String!) {

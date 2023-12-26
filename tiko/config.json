@@ -1,6 +1,6 @@
 {
   "name": "tiko / Mon Pilotage Elec",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "slug": "tiko",
   "description": "Control your tiko / Mon Pilotage Elec heaters",
   "image": "ghcr.io/marvinroger/hass-addon-tiko-{arch}",
@@ -16,6 +16,7 @@
     "TIKO_EMAIL": "",
     "TIKO_PASSWORD": "",
     "TIKO_PROPERTY_ID": "",
+    "TIKO_BYPASS_SCHEDULE": false,
     "MQTT_BROKER_URL": "",
     "MQTT_USERNAME": "",
     "MQTT_PASSWORD": "",
@@ -26,6 +27,7 @@
     "TIKO_EMAIL": "email",
     "TIKO_PASSWORD": "password",
     "TIKO_PROPERTY_ID": "str?",
+    "TIKO_BYPASS_SCHEDULE": "bool?",
     "MQTT_BROKER_URL": "str?",
     "MQTT_USERNAME": "str?",
     "MQTT_PASSWORD": "password?",
