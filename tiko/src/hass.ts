@@ -34,6 +34,8 @@ export function computeHassMqttConfiguration(
     const humidityEntityTopic = `${HASS_MQTT_DISCOVERY_PREFIX}/sensor/${humidityEntityId}`;
     const humidityStateTopic = `${humidityEntityTopic}/state`;
 
+    const supportsHumidity = room.currentHumidity != undefined;
+
     const device = {
       manufacturer: "tiko",
       identifiers: [fqid],
@@ -68,8 +70,12 @@ export function computeHassMqttConfiguration(
 
           mode_state_topic: climateStateTopic,
           mode_state_template: "{{ value_json.mode }}",
-          current_humidity_topic: climateStateTopic,
-          current_humidity_template: "{{ value_json.current_humidity }}",
+          ...(supportsHumidity
+            ? {
+                current_humidity_topic: climateStateTopic,
+                current_humidity_template: "{{ value_json.current_humidity }}",
+              }
+            : {}),
           current_temperature_topic: climateStateTopic,
           current_temperature_template: "{{ value_json.current_temperature }}",
           temperature_state_topic: climateStateTopic,
@@ -141,7 +147,7 @@ export function computeHassMqttConfiguration(
       }
     );
 
-    if (room.currentHumidity != undefined) {
+    if (supportsHumidity) {
       messages.push(
         {
           topic: `${humidityEntityTopic}/config`,

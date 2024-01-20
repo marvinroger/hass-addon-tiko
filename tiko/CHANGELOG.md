@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Fix the warning `'dict object' has no attribute 'current_humidity'` when humidity is not supported
+
 ## 1.3.0
 
 - Add a new `Bypass tiko schedule` option to avoid having the target temperature reset by the tiko schedule.
