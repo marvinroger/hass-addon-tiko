@@ -2,7 +2,7 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/base/aarch64:15.0.1
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM} as base
 
-RUN apk add --no-cache nodejs=20.11.0-r0 tini=0.19.0-r2
+RUN apk add --no-cache nodejs=20.11.1-r0 tini=0.19.0-r2
 
 FROM base as builder
 
