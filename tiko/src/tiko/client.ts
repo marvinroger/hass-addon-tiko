@@ -1,5 +1,7 @@
 import { ZodSchema, z } from "zod";
 import { Result, ResultAsync, err, ok } from "neverthrow";
+// @ts-expect-error see https://github.com/valeriangalliat/fetch-cookie/issues/84
+import makeFetchCookie from "fetch-cookie";
 import { getBeginningOfMonthTimestamp } from "../date.js";
 import {
   GET_DATA_QUERY,
@@ -180,6 +182,8 @@ type DoTikoRequestParams<
   token?: string;
 };
 
+const fetchCookie: typeof fetch = makeFetchCookie(fetch);
+
 async function doTikoRequest<
   VariablesSchema extends ZodSchema,
   DataSchema extends z.ZodSchema
@@ -192,7 +196,7 @@ async function doTikoRequest<
   Result<z.infer<DataSchema>, Error>
 > {
   const responseResult = await ResultAsync.fromPromise(
-    fetch(`https://${domain}/api/v3/graphql/`, {
+    fetchCookie(`https://${domain}/api/v3/graphql/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

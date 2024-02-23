@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0
+
+- Fix the API communication with tiko by handling cookies
+- Report the devices as `unavailable` when the API communication fails
+
 ## 1.3.1
 
 - Fix the warning `'dict object' has no attribute 'current_humidity'` when humidity is not supported

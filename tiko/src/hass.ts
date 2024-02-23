@@ -195,6 +195,11 @@ export const HASS_ID_PREFIX = "tiko_";
 export const HASS_MQTT_DISCOVERY_PREFIX = "homeassistant";
 export const HASS_MQTT_BIRTH_TOPIC = `${HASS_MQTT_DISCOVERY_PREFIX}/status`;
 export const GLOBAL_AVAILABILITY_TOPIC = `${HASS_MQTT_DISCOVERY_PREFIX}/tiko/availability`;
+export const UNAVAILABLE_MESSAGE: MqttMessage = {
+  topic: GLOBAL_AVAILABILITY_TOPIC,
+  retain: true,
+  message: "offline",
+};
 const GLOBAL_AVAILABILITY_CONFIG = { topic: GLOBAL_AVAILABILITY_TOPIC };
 
 // `none` is a special case in Home Assistant and must not be advertised

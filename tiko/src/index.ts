@@ -5,6 +5,7 @@ import { MqttClient } from "./mqtt.js";
 import {
   GLOBAL_AVAILABILITY_TOPIC,
   HASS_MQTT_BIRTH_TOPIC,
+  UNAVAILABLE_MESSAGE,
   computeHassMqttConfiguration,
 } from "./hass.js";
 import { StateUpdater } from "./state-updater.js";
@@ -65,6 +66,7 @@ const mqttCommandHandler = new MqttCommandHandler(
 );
 stateUpdater.on("error", (err) => {
   logger.error(err, "Error from state updater");
+  mqttPublisher.requestPublish([UNAVAILABLE_MESSAGE]);
 });
 
 const mqttClient = new MqttClient({

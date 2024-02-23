@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "fetch-cookie": "^3.0.0",
     "mqtt": "^5.3.3",
     "neverthrow": "^6.1.0",
     "pino": "^8.16.2",
