@@ -16,7 +16,8 @@
     "neverthrow": "^6.1.0",
     "pino": "^8.16.2",
     "pino-pretty": "^10.2.3",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zod-validation-error": "^3.0.3"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",

@@ -15,6 +15,7 @@ import { Properties, mapPresetMode, mapProperties } from "./mappers.js";
 import { TikoConfig } from "../config.js";
 import { PresetMode } from "../hass.js";
 import { DOMAIN_PER_PROVIDER } from "./providers.js";
+import { validate } from "../lib/validation.js";
 
 export class TikoClient {
   private domain: string;
@@ -227,13 +228,13 @@ async function doTikoRequest<
     data: queryDefinition.dataSchema,
   });
 
-  const dataResult = completeDataSchema.safeParse(json);
+  const dataResult = validate(completeDataSchema, json);
 
-  if (dataResult.success === false) {
+  if (dataResult.isErr()) {
     return err(dataResult.error);
   }
 
-  const data = dataResult.data;
+  const data = dataResult.value;
 
   return ok(data.data);
 }

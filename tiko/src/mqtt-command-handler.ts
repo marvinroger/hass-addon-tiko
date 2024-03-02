@@ -4,6 +4,7 @@ import {
   MQTT_CLIMATE_COMMAND_TOPIC_REGEX,
   mapHassIdToTikoId,
 } from "./hass.js";
+import { validate } from "./lib/validation.js";
 import { logger } from "./logger.js";
 import { StateUpdater } from "./state-updater.js";
 import { TikoClient } from "./tiko/client.js";
@@ -46,11 +47,12 @@ export class MqttCommandHandler {
 
       const tikoId = tikoIdResult.value;
 
-      const commandResult = CLIMATE_COMMAND_SCHEMA.safeParse(
+      const commandResult = validate(
+        CLIMATE_COMMAND_SCHEMA,
         JSON.parse(message)
       );
 
-      if (!commandResult.success) {
+      if (commandResult.isErr()) {
         logger.warn(
           { topic, message, errors: commandResult.error },
           "Invalid MQTT command, unable to parse message"
@@ -58,13 +60,13 @@ export class MqttCommandHandler {
         return;
       }
 
-      const { data } = commandResult;
+      const command = commandResult.value;
 
-      if (data.type === "targetTemperature") {
+      if (command.type === "targetTemperature") {
         const payload = {
           propertyId: this.propertyId,
           roomId: tikoId,
-          targetTemperature: data.targetTemperature,
+          targetTemperature: command.targetTemperature,
         };
 
         logger.info(payload, "Setting room target temperature");
@@ -79,8 +81,8 @@ export class MqttCommandHandler {
         return this.stateUpdater.requestUpdate();
       }
 
-      if (data.type === "presetMode") {
-        if (data.presetMode === "off") {
+      if (command.type === "presetMode") {
+        if (command.presetMode === "off") {
           logger.warn(
             "Setting individual preset mode 'off' is not supported by tiko, ignoring"
           );
@@ -90,7 +92,7 @@ export class MqttCommandHandler {
         const payload = {
           propertyId: this.propertyId,
           roomId: tikoId,
-          mode: data.presetMode,
+          mode: command.presetMode,
         };
 
         logger.info(payload, "Setting room mode");
