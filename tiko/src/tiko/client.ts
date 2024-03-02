@@ -1,5 +1,5 @@
 import { ZodSchema, z } from "zod";
-import { Err, Result, ResultAsync, err, ok } from "neverthrow";
+import { Result, ResultAsync, err, ok } from "neverthrow";
 // @ts-expect-error see https://github.com/valeriangalliat/fetch-cookie/issues/84
 import makeFetchCookie from "fetch-cookie";
 import { getBeginningOfMonthTimestamp } from "../date.js";
