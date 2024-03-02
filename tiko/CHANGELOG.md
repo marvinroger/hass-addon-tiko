@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.1
+
+- Fix lockup by refreshing tokens every 12 hours
+- Handle rate limiting by waiting for the next available time slot
+- Fix misleading credentials error when it's in fact due to rate limiting
+- Make error messages more explicit
+
 ## 1.4.0
 
 - Fix the API communication with tiko by handling cookies
