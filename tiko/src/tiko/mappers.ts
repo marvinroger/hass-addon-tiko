@@ -116,9 +116,7 @@ export function mapProperties(
     for (const room of property.rooms ?? []) {
       const presetModeResult = mapPresetMode(room.mode);
 
-      if (presetModeResult.isErr()) {
-        return err(presetModeResult.error);
-      }
+      if (presetModeResult.isErr()) return err(presetModeResult.error);
 
       const presetMode = presetModeResult.value;
 

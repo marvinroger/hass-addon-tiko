@@ -28,7 +28,7 @@ const initialCallResult = await tikoClient.fetchData(new Date());
 if (initialCallResult.isErr()) {
   logger.error(
     initialCallResult.error,
-    "Failed to fetch data from Tiko; are the credentials correct?"
+    "Unable to fetch initial data from tiko API"
   );
   process.exit(1);
 }

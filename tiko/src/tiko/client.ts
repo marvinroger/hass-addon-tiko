@@ -1,5 +1,5 @@
 import { ZodSchema, z } from "zod";
-import { Result, ResultAsync, err, ok } from "neverthrow";
+import { Err, Result, ResultAsync, err, ok } from "neverthrow";
 // @ts-expect-error see https://github.com/valeriangalliat/fetch-cookie/issues/84
 import makeFetchCookie from "fetch-cookie";
 import { getBeginningOfMonthTimestamp } from "../date.js";
@@ -16,6 +16,8 @@ import { TikoConfig } from "../config.js";
 import { PresetMode } from "../hass.js";
 import { DOMAIN_PER_PROVIDER } from "./providers.js";
 import { validate } from "../lib/validation.js";
+import { logger } from "../logger.js";
+import { setTimeout } from "node:timers/promises";
 
 export class TikoClient {
   private domain: string;
@@ -40,7 +42,14 @@ export class TikoClient {
       },
     });
 
-    if (dataResult.isErr()) return err(dataResult.error);
+    if (dataResult.isErr()) {
+      return err(
+        new Error(
+          "Unable to get a token from Tiko; are the credentials correct?",
+          { cause: dataResult.error }
+        )
+      );
+    }
 
     const data = dataResult.value;
 
@@ -196,47 +205,77 @@ async function doTikoRequest<
 }: DoTikoRequestParams<VariablesSchema, DataSchema>): Promise<
   Result<z.infer<DataSchema>, Error>
 > {
-  const responseResult = await ResultAsync.fromPromise(
-    fetchCookie(`https://${domain}/api/v3/graphql/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `token ${token}` } : {}),
-      },
-      body: JSON.stringify({
-        query: queryDefinition.query,
-        variables,
+  while (true) {
+    const responseResult = await ResultAsync.fromPromise(
+      fetchCookie(`https://${domain}/api/v3/graphql/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `token ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          query: queryDefinition.query,
+          variables,
+        }),
       }),
-    }),
-    (err) => new Error("Request failed", { cause: err })
-  );
+      (err) => new Error("Request failed", { cause: err })
+    );
 
-  if (responseResult.isErr()) return responseResult;
+    if (responseResult.isErr()) return err(responseResult.error);
 
-  const response = responseResult.value;
+    const response = responseResult.value;
 
-  const jsonResult = await ResultAsync.fromPromise(
-    response.json(),
-    (err) => new Error("Unable to parse JSON", { cause: err })
-  );
+    const jsonResult = await ResultAsync.fromPromise(
+      response.json(),
+      (err) => new Error("Unable to parse JSON", { cause: err })
+    );
 
-  if (jsonResult.isErr()) return jsonResult;
+    if (jsonResult.isErr()) return err(jsonResult.error);
 
-  const json = jsonResult.value;
+    const json = jsonResult.value;
 
-  const completeDataSchema = z.object({
-    data: queryDefinition.dataSchema,
-  });
+    const tikoErrorsResult = validate(TIKO_ERRORS_SCHEMA, json);
 
-  const dataResult = validate(completeDataSchema, json);
+    if (tikoErrorsResult.isOk() && tikoErrorsResult.value.errors.length > 0) {
+      if (
+        tikoErrorsResult.value.errors.some((error) =>
+          error.message.startsWith("Limite de taux atteinte")
+        )
+      ) {
+        logger.warn(
+          "tiko rate limit reached. Waiting 2 minutes before trying again"
+        );
+        await setTimeout(60 * 2 * 1_000);
+        continue;
+      }
 
-  if (dataResult.isErr()) {
-    return err(dataResult.error);
+      return err(
+        new Error(
+          `The tiko API returned an error: ${JSON.stringify(
+            tikoErrorsResult.value
+          )}`
+        )
+      );
+    }
+
+    const completeDataSchema = z.object({
+      data: queryDefinition.dataSchema,
+    });
+
+    const dataResult = validate(completeDataSchema, json);
+
+    if (dataResult.isErr()) {
+      return err(
+        new Error("The data from tiko was not the expected shape", {
+          cause: dataResult.error,
+        })
+      );
+    }
+
+    const data = dataResult.value;
+
+    return ok(data.data);
   }
-
-  const data = dataResult.value;
-
-  return ok(data.data);
 }
 
 const TIKO_MUTATION_MODE_PER_PRESET_MODE: Record<
@@ -251,3 +290,11 @@ const TIKO_MUTATION_MODE_PER_PRESET_MODE: Record<
 };
 
 const SCHEDULE_DAYS = ["0", "1", "2", "3", "4", "5", "6"];
+
+const TIKO_ERRORS_SCHEMA = z.object({
+  errors: z.array(
+    z.object({
+      message: z.string(),
+    })
+  ),
+});
