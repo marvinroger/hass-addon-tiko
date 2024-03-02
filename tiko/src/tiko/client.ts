@@ -23,7 +23,10 @@ export class TikoClient {
   private domain: string;
   private bypassSchedule: boolean;
 
-  private token?: string;
+  private token?: {
+    value: string;
+    expiresAt: Date;
+  };
 
   constructor(private readonly config: TikoConfig) {
     this.domain = DOMAIN_PER_PROVIDER[config.provider];
@@ -31,7 +34,9 @@ export class TikoClient {
   }
 
   async getToken(): Promise<Result<string, Error>> {
-    if (this.token) return ok(this.token);
+    if (this.token && this.token.expiresAt.getTime() > Date.now()) {
+      return ok(this.token.value);
+    }
 
     const dataResult = await doTikoRequest({
       domain: this.domain,
@@ -53,9 +58,12 @@ export class TikoClient {
 
     const data = dataResult.value;
 
-    this.token = data.logIn.token;
+    this.token = {
+      value: data.logIn.token,
+      expiresAt: new Date(Date.now() + TIKO_TOKEN_LIFESPAN_MS),
+    };
 
-    return ok(this.token);
+    return ok(this.token.value);
   }
 
   async fetchData(timeReference: Date): Promise<Result<Properties, Error>> {
@@ -298,3 +306,5 @@ const TIKO_ERRORS_SCHEMA = z.object({
     })
   ),
 });
+
+const TIKO_TOKEN_LIFESPAN_MS = 12 * 60 * 60 * 1_000;
