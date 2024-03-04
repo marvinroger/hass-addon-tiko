@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.2
+
+- Fix state being stale due to a logic error
+
 ## 1.4.1
 
 - Fix lockup by refreshing tokens every 12 hours

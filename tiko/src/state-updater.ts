@@ -22,10 +22,7 @@ export class StateUpdater extends (EventEmitter as new () => TypedEmitter<StateU
   ) {
     super();
 
-    global.setTimeout(
-      () => this.requestUpdate(),
-      updateIntervalMinutes * 60 * 1_000
-    );
+    setInterval(() => this.requestUpdate(), updateIntervalMinutes * 60 * 1_000);
   }
 
   requestUpdate() {
