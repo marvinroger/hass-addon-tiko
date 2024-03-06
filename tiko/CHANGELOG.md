@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.3
+
+- Fix authentication error due to token being expired
+
 ## 1.4.2
 
 - Fix state being stale due to a logic error

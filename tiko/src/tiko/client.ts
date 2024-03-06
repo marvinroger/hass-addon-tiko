@@ -307,4 +307,5 @@ const TIKO_ERRORS_SCHEMA = z.object({
   ),
 });
 
-const TIKO_TOKEN_LIFESPAN_MS = 12 * 60 * 60 * 1_000;
+/** The token seems valid for 10 hours, so we set half of this to have a safe margin */
+const TIKO_TOKEN_LIFESPAN_MS = 5 * 60 * 60 * 1_000;
