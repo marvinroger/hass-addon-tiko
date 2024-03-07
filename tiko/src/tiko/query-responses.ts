@@ -11,8 +11,8 @@ export type QueryDefinition<
 
 export const LOGIN_MUTATION = {
   query: `
-  mutation LogIn($email: String!, $password: String!) {
-    logIn(input: { email: $email, password: $password }) {
+  mutation LogIn($email: String!, $password: String!, $retainSession: Boolean!) {
+    logIn(input: { email: $email, password: $password, retainSession: $retainSession }) {
       token
     }
   }
@@ -20,6 +20,7 @@ export const LOGIN_MUTATION = {
   variablesSchema: z.object({
     email: z.string(),
     password: z.string(),
+    retainSession: z.boolean(),
   }),
   dataSchema: z.object({
     logIn: z.object({

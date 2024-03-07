@@ -44,6 +44,7 @@ export class TikoClient {
       variables: {
         email: this.config.email,
         password: this.config.password,
+        retainSession: true,
       },
     });
 

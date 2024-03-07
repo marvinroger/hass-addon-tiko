@@ -1,6 +1,6 @@
 {
   "name": "tiko / Mon Pilotage Elec",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "slug": "tiko",
   "description": "Control your tiko / Mon Pilotage Elec heaters",
   "image": "ghcr.io/marvinroger/hass-addon-tiko-{arch}",

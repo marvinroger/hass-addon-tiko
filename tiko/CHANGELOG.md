@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.4
+
+- Fix error `null value in column "retain_mobile_session"` that some users might encounter
+
 ## 1.4.3
 
 - Fix authentication error due to token being expired
