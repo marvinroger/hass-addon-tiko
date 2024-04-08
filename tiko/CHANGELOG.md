@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.5
+
+- Fix errors when temperature sensor is disconnected
+
 ## 1.4.4
 
 - Fix error `null value in column "retain_mobile_session"` that some users might encounter
