@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.6
+
+- Fix errors when temperature sensor battery is low
+
 ## 1.4.5
 
 - Fix errors when temperature sensor is disconnected
