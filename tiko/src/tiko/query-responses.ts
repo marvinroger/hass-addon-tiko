@@ -116,9 +116,9 @@ export const GET_DATA_QUERY = {
               status: z.object({
                 disconnected: z.boolean(),
                 heatingOperating: z.boolean(),
-                // Either false or the sensor ID
-                sensorBatteryLow: z.literal(false).or(z.string()),
-                sensorDisconnected: z.literal(false).or(z.string()),
+                // Can also be the sensor ID
+                sensorBatteryLow: z.boolean().or(z.string()),
+                sensorDisconnected: z.boolean().or(z.string()),
               }),
             })
           )

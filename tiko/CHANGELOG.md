@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.7
+
+- Fix API inconsistency when fetching the sensors status
+
 ## 1.4.6
 
 - Fix errors when temperature sensor battery is low
