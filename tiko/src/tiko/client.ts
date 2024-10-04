@@ -1,6 +1,4 @@
-import { ZodSchema, z } from "zod";
 import { Result, ResultAsync, err, ok } from "neverthrow";
-// @ts-expect-error see https://github.com/valeriangalliat/fetch-cookie/issues/84
 import makeFetchCookie from "fetch-cookie";
 import { getBeginningOfMonthTimestamp } from "../date.js";
 import {
@@ -18,6 +16,7 @@ import { DOMAIN_PER_PROVIDER } from "./providers.js";
 import { validate } from "../lib/validation.js";
 import { logger } from "../logger.js";
 import { setTimeout } from "node:timers/promises";
+import { type } from "arktype";
 
 export class TikoClient {
   private domain: string;
@@ -192,27 +191,27 @@ export class TikoClient {
 }
 
 type DoTikoRequestParams<
-  VariablesSchema extends z.ZodSchema,
-  DataSchema extends z.ZodSchema
+  VariablesSchema extends type.Any,
+  DataSchema extends type.Any
 > = {
   domain: string;
   queryDefinition: QueryDefinition<VariablesSchema, DataSchema>;
-  variables: z.infer<VariablesSchema>;
+  variables: VariablesSchema["infer"];
   token?: string;
 };
 
 const fetchCookie: typeof fetch = makeFetchCookie(fetch);
 
 async function doTikoRequest<
-  VariablesSchema extends ZodSchema,
-  DataSchema extends z.ZodSchema
+  VariablesSchema extends type.Any,
+  DataSchema extends type.Any
 >({
   domain,
   queryDefinition,
   variables,
   token,
 }: DoTikoRequestParams<VariablesSchema, DataSchema>): Promise<
-  Result<z.infer<DataSchema>, Error>
+  Result<DataSchema["infer"], Error>
 > {
   while (true) {
     const responseResult = await ResultAsync.fromPromise(
@@ -267,17 +266,17 @@ async function doTikoRequest<
       );
     }
 
-    const completeDataSchema = z.object({
-      data: queryDefinition.dataSchema,
+    const completeDataSchema = type({
+      data: queryDefinition.dataSchema as type.Any,
     });
 
     const dataResult = validate(completeDataSchema, json);
 
     if (dataResult.isErr()) {
       return err(
-        new Error("The data from tiko was not the expected shape", {
-          cause: dataResult.error,
-        })
+        new Error(
+          `The data from tiko was not the expected shape: ${dataResult.error}`
+        )
       );
     }
 
@@ -300,12 +299,10 @@ const TIKO_MUTATION_MODE_PER_PRESET_MODE: Record<
 
 const SCHEDULE_DAYS = ["0", "1", "2", "3", "4", "5", "6"];
 
-const TIKO_ERRORS_SCHEMA = z.object({
-  errors: z.array(
-    z.object({
-      message: z.string(),
-    })
-  ),
+const TIKO_ERRORS_SCHEMA = type({
+  errors: type({
+    message: "string",
+  }).array(),
 });
 
 /** The token seems valid for 10 hours, so we set half of this to have a safe margin */

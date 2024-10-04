@@ -1,16 +1,15 @@
+import { type } from "arktype";
 import { ok, err, Result } from "neverthrow";
-import { ZodType, z } from "zod";
-import { type ValidationError, fromZodError } from "zod-validation-error";
 
-export function validate<Schema extends ZodType>(
+export function validate<Schema extends type.Any>(
   schema: Schema,
   value: unknown
-): Result<z.infer<Schema>, ValidationError> {
-  const result = schema.safeParse(value);
+): Result<Schema["infer"], Error> {
+  const result = schema(value);
 
-  if (result.success) {
-    return ok(result.data);
+  if (result instanceof type.errors) {
+    return err(new Error(result.summary));
   }
 
-  return err(fromZodError(result.error));
+  return ok(result);
 }

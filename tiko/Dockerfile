@@ -1,8 +1,8 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base/aarch64:15.0.1
+ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:3.20
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM} as base
 
-RUN apk add --no-cache nodejs=20.12.1-r0 tini=0.19.0-r2
+RUN apk add --no-cache nodejs=20.15.1-r0 tini=0.19.0-r3
 
 FROM base as builder
 
@@ -13,7 +13,7 @@ COPY package-lock.json /app/
 COPY tsconfig.json /app/
 COPY src/ /app/src/
 
-RUN apk add --no-cache npm=10.2.5-r0 && \
+RUN apk add --no-cache npm=10.8.0-r0 && \
     npm ci --no-audit --no-optional --no-update-notifier && \
     npm run build && \
     rm -rf node_modules && \
@@ -51,7 +51,7 @@ LABEL \
     org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
     org.opencontainers.image.vendor="Marvin ROGER <bonjour+dev@marvinroger.fr>" \
     org.opencontainers.image.authors="Marvin ROGER <bonjour+dev@marvinroger.fr>" \
-    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.licenses="UNLICENSED" \
     org.opencontainers.image.url="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \

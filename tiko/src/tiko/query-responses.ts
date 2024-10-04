@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { type } from "arktype";
 
 export type QueryDefinition<
-  VariablesSchema extends z.ZodSchema = z.ZodSchema,
-  Schema extends z.ZodSchema = z.ZodSchema
+  VariablesSchema extends type.Any = type.Any,
+  Schema extends type.Any = type.Any
 > = {
   query: string;
   variablesSchema: VariablesSchema;
@@ -17,17 +17,17 @@ export const LOGIN_MUTATION = {
     }
   }
 `,
-  variablesSchema: z.object({
-    email: z.string(),
-    password: z.string(),
-    retainSession: z.boolean(),
+  variablesSchema: type({
+    email: "string",
+    password: "string",
+    retainSession: "boolean",
   }),
-  dataSchema: z.object({
-    logIn: z.object({
-      token: z.string(),
-    }),
+  dataSchema: type({
+    logIn: {
+      token: "string",
+    },
   }),
-} as const satisfies QueryDefinition;
+} as const; // satisfies QueryDefinition;
 
 export const GET_DATA_QUERY = {
   query: `
@@ -71,64 +71,56 @@ export const GET_DATA_QUERY = {
       }
     }
   `,
-  variablesSchema: z.object({
-    consumptionStartTimestamp: z.number(),
-    consumptionEndTimestamp: z.number(),
+  variablesSchema: type({
+    consumptionStartTimestamp: "number",
+    consumptionEndTimestamp: "number",
   }),
-  dataSchema: z.object({
-    properties: z.array(
-      z.object({
-        id: z.number(),
-        name: z.string(),
-        fastConsumption: z.object({
-          energyKwh: z.number(),
-          roomsConsumption: z.array(
-            z.object({
-              id: z.number(),
-              name: z.string(),
-              energyKwh: z.number(),
-            })
-          ),
+  dataSchema: type({
+    properties: type({
+      id: "number",
+      name: "string",
+      fastConsumption: {
+        energyKwh: "number",
+        roomsConsumption: type({
+          id: "number",
+          name: "string",
+          energyKwh: "number",
+        }).array(),
+      },
+      rooms: type({
+        id: "number",
+        name: "string",
+        currentTemperatureDegrees: "number | null",
+        // Mon Pilotage Elec does not have humidity sensors
+        humidity: "number | null",
+        targetTemperatureDegrees: "number",
+        mode: type({
+          absence: "boolean",
+          boost: "boolean",
+          disableHeating: "boolean",
+          frost: "boolean",
         }),
-        rooms: z
-          .array(
-            z.object({
-              id: z.number(),
-              name: z.string(),
-              currentTemperatureDegrees: z.number().nullable(),
-              // Mon Pilotage Elec does not have humidity sensors
-              humidity: z.number().nullable(),
-              targetTemperatureDegrees: z.number(),
-              mode: z.object({
-                absence: z.boolean(),
-                boost: z.boolean(),
-                disableHeating: z.boolean(),
-                frost: z.boolean(),
-              }),
-              devices: z.array(
-                z.object({
-                  id: z.number(),
-                  mac: z.string(),
-                  type: z.string(),
-                  code: z.string(),
-                })
-              ),
-              status: z.object({
-                disconnected: z.boolean(),
-                heatingOperating: z.boolean(),
-                // Can also be the sensor ID
-                sensorBatteryLow: z.boolean().or(z.string()),
-                sensorDisconnected: z.boolean().or(z.string()),
-              }),
-            })
-          )
-          .nullable(),
+        devices: type({
+          id: "number",
+          mac: "string",
+          type: "string",
+          code: "string",
+        }).array(),
+        status: {
+          disconnected: "boolean",
+          heatingOperating: "boolean",
+          // Can also be the sensor ID
+          sensorBatteryLow: "boolean | string",
+          sensorDisconnected: "boolean | string",
+        },
       })
-    ),
+        .array()
+        .or("null"),
+    }).array(),
   }),
-} as const satisfies QueryDefinition;
+} as const; // satisfies QueryDefinition;
 
-export type GetDataResponse = z.infer<(typeof GET_DATA_QUERY)["dataSchema"]>;
+export type GetDataResponse = (typeof GET_DATA_QUERY)["dataSchema"]["infer"];
 
 export const SET_ROOM_TEMPERATURE_MUTATION = {
   query: `
@@ -143,20 +135,20 @@ export const SET_ROOM_TEMPERATURE_MUTATION = {
       }
     }
 `,
-  variablesSchema: z.object({
-    propertyId: z.number(),
-    roomId: z.number(),
-    temperature: z.number(),
+  variablesSchema: type({
+    propertyId: "number",
+    roomId: "number",
+    temperature: "number",
   }),
-  dataSchema: z.object({
-    setRoomAdjustTemperature: z.object({
-      adjustTemperature: z.object({
-        active: z.boolean(),
-        temperature: z.number(),
-      }),
+  dataSchema: type({
+    setRoomAdjustTemperature: type({
+      adjustTemperature: {
+        active: "boolean",
+        temperature: "number",
+      },
     }),
   }),
-} as const satisfies QueryDefinition;
+} as const; // satisfies QueryDefinition;
 
 export const SET_ROOM_TEMPERATURE_WITH_SCHEDULE_MUTATION = {
   query: `
@@ -177,24 +169,24 @@ export const SET_ROOM_TEMPERATURE_WITH_SCHEDULE_MUTATION = {
       }
     }
 `,
-  variablesSchema: z.object({
-    propertyId: z.number(),
-    roomId: z.number(),
-    temperature: z.number(),
-    scheduleData: z.string(),
+  variablesSchema: type({
+    propertyId: "number",
+    roomId: "number",
+    temperature: "number",
+    scheduleData: "string",
   }),
-  dataSchema: z.object({
-    setRoomAdjustTemperature: z.object({
-      adjustTemperature: z.object({
-        active: z.boolean(),
-        temperature: z.number(),
-      }),
-    }),
-    setRoomTemperatureSchedule: z.object({
-      id: z.number(),
-    }),
+  dataSchema: type({
+    setRoomAdjustTemperature: {
+      adjustTemperature: {
+        active: "boolean",
+        temperature: "number",
+      },
+    },
+    setRoomTemperatureSchedule: {
+      id: "number",
+    },
   }),
-} as const satisfies QueryDefinition;
+} as const; // satisfies QueryDefinition;
 
 export const SET_ROOM_MODE_MUTATION = {
   query: `
@@ -211,25 +203,19 @@ export const SET_ROOM_MODE_MUTATION = {
       }
     }
 `,
-  variablesSchema: z.object({
-    propertyId: z.number(),
-    roomId: z.number(),
-    mode: z.union([
-      z.literal(false),
-      z.literal("boost"),
-      z.literal("absence"),
-      z.literal("frost"),
-      z.literal("disableHeating"),
-    ]),
+  variablesSchema: type({
+    propertyId: "number",
+    roomId: "number",
+    mode: "false | 'boost' | 'absence' | 'frost' | 'disableHeating'",
   }),
-  dataSchema: z.object({
-    setRoomMode: z.object({
-      mode: z.object({
-        absence: z.boolean(),
-        boost: z.boolean(),
-        disableHeating: z.boolean(),
-        frost: z.boolean(),
-      }),
-    }),
+  dataSchema: type({
+    setRoomMode: {
+      mode: {
+        absence: "boolean",
+        boost: "boolean",
+        disableHeating: "boolean",
+        frost: "boolean",
+      },
+    },
   }),
-} as const satisfies QueryDefinition;
+} as const; // satisfies QueryDefinition;

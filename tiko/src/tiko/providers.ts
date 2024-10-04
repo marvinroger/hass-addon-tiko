@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { type } from "arktype";
 
-export const PROVIDER_SCHEMA = z.enum(["tiko", "mon-pilotage-elec"]);
+export const PROVIDER_SCHEMA = type("===", "tiko", "mon-pilotage-elec");
 
-export type Provider = z.infer<typeof PROVIDER_SCHEMA>;
+export type Provider = typeof PROVIDER_SCHEMA.infer;
 
 export const DOMAIN_PER_PROVIDER: Record<Provider, string> = {
   tiko: "particuliers-tiko.fr",

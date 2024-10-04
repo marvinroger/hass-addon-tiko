@@ -2,6 +2,10 @@
 
 ## 1.4.7
 
+- This is a maintenance release updating the dependencies to their latest versions
+
+## 1.4.7
+
 - Fix API inconsistency when fetching the sensors status
 
 ## 1.4.6

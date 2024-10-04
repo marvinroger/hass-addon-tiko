@@ -1,6 +1,6 @@
-import { z } from "zod";
 import { Property } from "./tiko/mappers.js";
 import { Result, err, ok } from "neverthrow";
+import { type } from "arktype";
 
 type CommandTopic = { topic: string; type: "climate"; roomId: number };
 export type MqttMessage = { topic: string; retain: boolean; message: string };
@@ -212,17 +212,15 @@ const PRESET_MODES_WITHOUT_NONE = [
 
 const PRESET_MODES = ["none", ...PRESET_MODES_WITHOUT_NONE] as const;
 export type PresetMode = (typeof PRESET_MODES)[number];
-const PRESET_MODE_SCHEMA = z.enum(PRESET_MODES);
-export const CLIMATE_COMMAND_SCHEMA = z.union([
-  z.object({
-    type: z.literal("targetTemperature"),
-    targetTemperature: z.number(),
-  }),
-  z.object({
-    type: z.literal("presetMode"),
-    presetMode: PRESET_MODE_SCHEMA,
-  }),
-]);
+const PRESET_MODE_SCHEMA = type("===", ...PRESET_MODES);
+export const CLIMATE_COMMAND_SCHEMA = type({
+  type: "'targetTemperature'",
+  targetTemperature: "number",
+}).or({
+  type: "'presetMode'",
+  presetMode: PRESET_MODE_SCHEMA,
+});
+
 export const MQTT_CLIMATE_COMMAND_TOPIC_REGEX = new RegExp(
   `^${HASS_MQTT_DISCOVERY_PREFIX}\\/climate\\/(?<hassId>${HASS_ID_PREFIX}\\d+)\\/set$`
 );
