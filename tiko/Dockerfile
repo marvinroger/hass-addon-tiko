@@ -2,7 +2,7 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/base/aarch64:15.0.1
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM} as base
 
-RUN apk add --no-cache nodejs=20.12.1-r0 tini=0.19.0-r2
+RUN apk add --no-cache nodejs=~20.15 tini=~0.19
 
 FROM base as builder
 
@@ -13,7 +13,7 @@ COPY package-lock.json /app/
 COPY tsconfig.json /app/
 COPY src/ /app/src/
 
-RUN apk add --no-cache npm=10.2.5-r0 && \
+RUN apk add --no-cache npm=~10.2 && \
     npm ci --no-audit --no-optional --no-update-notifier && \
     npm run build && \
     rm -rf node_modules && \

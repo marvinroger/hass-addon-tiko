@@ -9,9 +9,7 @@ type TikoPresetMode = {
   frost: boolean;
 };
 
-export function mapPresetMode(
-  mode: TikoPresetMode
-): Result<PresetMode | undefined, Error> {
+export function mapPresetMode(mode: TikoPresetMode): Result<PresetMode, Error> {
   const onModes = Object.entries(mode)
     .filter(([, on]) => on)
     .map(([key]) => key);
@@ -93,7 +91,7 @@ type Room = {
   currentTemperature: number | undefined;
   currentHumidity: number | undefined;
   targetTemperature: number;
-  presetMode: PresetMode | undefined;
+  presetMode: PresetMode;
   heating: boolean;
 };
 

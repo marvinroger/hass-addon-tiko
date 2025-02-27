@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.0
+
+- ⚠️ Breaking change! Previously, the heater `mode` would be `heat` when actually heating, and `off` when not, and the `action` would not be set.
+This new version implements the correct behavior: the `mode` is either `heat` when the heater is on (whether it's actually heating or not), or `off` if it's off. `action` is either `off` when the heater is off, `idle` when the heater is on but not actually heating, and `heating` when it's actually heating.
+
+  This should help with integrations like Versatile Thermostat. Thanks to @tduboys for reporting and fixing the bug!
+
 ## 1.4.7
 
 - Fix API inconsistency when fetching the sensors status

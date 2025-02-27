@@ -70,6 +70,8 @@ export function computeHassMqttConfiguration(
 
           mode_state_topic: climateStateTopic,
           mode_state_template: "{{ value_json.mode }}",
+          action_topic: climateStateTopic,
+          action_template: "{{ value_json.action }}",
           ...(supportsHumidity
             ? {
                 current_humidity_topic: climateStateTopic,
@@ -95,7 +97,12 @@ export function computeHassMqttConfiguration(
         topic: climateStateTopic,
         retain: true,
         message: JSON.stringify({
-          mode: room.heating ? "heat" : "off",
+          mode: room.presetMode === "off" ? "off" : "heat",
+          action: room.heating
+            ? "heating"
+            : room.presetMode === "off"
+            ? "off"
+            : "idle",
           current_humidity: room.currentHumidity,
           current_temperature: room.currentTemperature,
           target_temperature: room.targetTemperature,
